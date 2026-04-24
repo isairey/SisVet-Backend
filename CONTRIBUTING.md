@@ -47,8 +47,8 @@ refactor/optimize-queries                - Mejoras internas de código
 ### 1. Clonar el Repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/veterinary-clinic-backend.git
-cd veterinary-clinic-backend
+git clone https://github.com/isairey/SisVet-Backend.git
+cd SisVet-Backend
 ````
 
 ### 2. Crear una Rama de Trabajo
@@ -325,8 +325,5 @@ Explica el propósito o problema identificado.
 
 ---
 
-**Última actualización:** Octubre 2025
-**Proyecto:** Veterinary Clinic Backend
-**Equipo:** Ingeniería de Software - Proyecto Nuclear
 
-```
+
