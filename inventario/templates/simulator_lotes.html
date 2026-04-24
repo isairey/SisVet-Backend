@@ -1,0 +1,331 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Simulador de Lotes - {{ producto.nombre }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+    .info-box {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #2196F3;
+    }
+    .info-box h2 {
+        margin-top: 0;
+        color: #1976D2;
+    }
+    .form-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: #2196F3;
+    }
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .btn-primary {
+        background: #2196F3;
+        color: #FFFFFF;
+    }
+    .btn-primary:hover {
+        background: #1976D2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(33,150,243,0.3);
+    }
+    .btn-success {
+        background: #4CAF50;
+        color: #FFFFFF;
+    }
+    .btn-success:hover {
+        background: #45a049;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(76,175,80,0.3);
+    }
+    .btn-secondary {
+        background: #757575;
+        color: #FFFFFF;
+    }
+    .btn-secondary:hover {
+        background: #616161;
+    }
+    .resultado-card {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    .resultado-card h3 {
+        color: #1976D2;
+        margin-top: 0;
+    }
+    .lote-item {
+        background: white;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border-left: 4px solid #4CAF50;
+    }
+    .comparacion-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .estrategia-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        transition: all 0.3s;
+    }
+    .estrategia-card:hover {
+        border-color: #2196F3;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .estrategia-card h4 {
+        color: #1976D2;
+        margin-top: 0;
+    }
+    .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        margin: 5px 5px 5px 0;
+    }
+    .badge-success {
+        background: #4CAF50;
+        color: #FFFFFF;
+    }
+    .badge-warning {
+        background: #FF9800;
+        color: #FFFFFF;
+    }
+    .badge-info {
+        background: #2196F3;
+        color: #FFFFFF;
+    }
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🎯 Simulador de Estrategias de Lote</h1>
+
+    <div class="info-box">
+        <h2>📦 {{ producto.nombre }}</h2>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px;">
+            <div>
+                <strong>Stock Actual:</strong><br>
+                <span style="font-size: 24px; color: #2196F3;">{{ producto.stock }}</span> unidades
+            </div>
+            <div>
+                <strong>Stock Mínimo:</strong><br>
+                <span style="font-size: 24px; color: #FF9800;">{{ producto.stock_minimo }}</span> unidades
+            </div>
+            <div>
+                <strong>Precio Compra:</strong><br>
+                <span style="font-size: 24px; color: #4CAF50;">${{ producto.precio_compra }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <h3>⚙️ Configurar Simulación</h3>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="cantidad_requerida">💼 Cantidad Requerida:</label>
+                <input
+                    type="number"
+                    id="cantidad_requerida"
+                    name="cantidad_requerida"
+                    step="0.01"
+                    required
+                    placeholder="Ej: 50"
+                    value="{{ request.POST.cantidad_requerida|default:'' }}"
+                >
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Ingrese la cantidad que desea retirar del inventario
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="estrategia">🎲 Estrategia de Selección:</label>
+                <select id="estrategia" name="estrategia" required>
+                    {% for codigo, nombre in estrategias_disponibles %}
+                        <option value="{{ codigo }}" {% if request.POST.estrategia == codigo %}selected{% endif %}>
+                            {{ nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Seleccione el método para elegir los lotes
+                </small>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" name="accion" value="simular" class="btn btn-primary">
+                    🔍 Simular con Estrategia Seleccionada
+                </button>
+                <button type="submit" name="accion" value="comparar" class="btn btn-success">
+                    📊 Comparar Todas las Estrategias
+                </button>
+                <a href="{% url 'admin:inventario_producto_change' producto.pk %}" class="btn btn-secondary">
+                    ❌ Volver
+                </a>
+            </div>
+        </form>
+    </div>
+
+    {% if resultado %}
+    <div class="resultado-card">
+        <h3>✅ Resultado de la Simulación</h3>
+        <div style="background: white; padding: 20px; border-radius: 5px; margin-top: 15px;">
+            <div class="stat-row">
+                <strong>Estrategia Usada:</strong>
+                <span class="badge badge-info">{{ resultado.estrategia }}</span>
+            </div>
+            <div class="stat-row">
+                <strong>Cantidad Requerida:</strong>
+                <span>{{ resultado.cantidad_requerida }} unidades</span>
+            </div>
+            <div class="stat-row">
+                <strong>Cantidad Obtenida:</strong>
+                <span>{{ resultado.cantidad_obtenida }} unidades</span>
+            </div>
+            <div class="stat-row">
+                <strong>Lotes Utilizados:</strong>
+                <span>{{ resultado.lotes_usados }} lotes</span>
+            </div>
+            <div class="stat-row">
+                <strong>Cumple Requerimiento:</strong>
+                {% if resultado.cumple_requerimiento %}
+                    <span class="badge badge-success">✅ SÍ</span>
+                {% else %}
+                    <span class="badge badge-warning">⚠️ NO</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <h4 style="margin-top: 25px;">📋 Detalle de Lotes Seleccionados:</h4>
+        {% for lote in resultado.detalle_lotes %}
+        <div class="lote-item">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>{{ lote.numero_lote }}</strong> - {{ lote.producto }}
+                    <br>
+                    <small style="color: #666;">
+                        Vence: {{ lote.fecha_vencimiento|default:"Sin vencimiento" }}
+                        {% if lote.fecha_vencimiento %}({{ lote.dias_hasta_vencimiento }} días){% endif %}
+                    </small>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 20px; color: #2196F3; font-weight: bold;">
+                        {{ lote.cantidad_usada }} unidades
+                    </div>
+                    <small style="color: #666;">Precio: ${{ lote.precio_compra }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if comparacion %}
+    <div class="resultado-card">
+        <h3>📊 Comparación de Estrategias</h3>
+        <p style="color: #666;">Todas las estrategias aplicadas a la misma cantidad requerida</p>
+
+        <div class="comparacion-grid">
+            {% for codigo, datos in comparacion.items %}
+            <div class="estrategia-card">
+                <h4>{{ datos.estrategia }}</h4>
+
+                {% if datos.error %}
+                    <p style="color: #f44336;">❌ Error: {{ datos.error }}</p>
+                {% else %}
+                    <div class="stat-row">
+                        <strong>Lotes usados:</strong>
+                        <span class="badge badge-info">{{ datos.lotes_usados }}</span>
+                    </div>
+                    <div class="stat-row">
+                        <strong>Cantidad obtenida:</strong>
+                        <span>{{ datos.cantidad_obtenida }}</span>
+                    </div>
+                    <div class="stat-row">
+                        <strong>Cumple:</strong>
+                        {% if datos.cumple_requerimiento %}
+                            <span class="badge badge-success">✅</span>
+                        {% else %}
+                            <span class="badge badge-warning">⚠️</span>
+                        {% endif %}
+                    </div>
+
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; color: #2196F3;">Ver lotes</summary>
+                        <div style="margin-top: 10px;">
+                            {% for lote in datos.detalle_lotes %}
+                                <div style="padding: 8px; background: #f9f9f9; margin: 5px 0; border-radius: 3px;">
+                                    <strong>{{ lote.numero_lote }}:</strong> {{ lote.cantidad_usada }} unidades
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </details>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

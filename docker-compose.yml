@@ -1,0 +1,93 @@
+services:
+  db:
+    image: postgres:16
+    container_name: sgv_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-sgv}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sgv_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sgv_backend
+    restart: always
+    environment:
+      # Base de datos
+      DB_NAME: ${DB_NAME:-sgv}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_HOST: db
+      DB_PORT: 5432
+      # Django
+      DJANGO_SETTINGS_MODULE: clinica_veterinaria.settings
+      SECRET_KEY: ${SECRET_KEY:-django-insecure-change-this-in-production}
+      DEBUG: ${DEBUG:-False}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
+      # CORS
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Montar código para desarrollo (comentar en producción)
+      - .:/app
+      # Volumen para archivos estáticos y media
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sgv_network
+    command: gunicorn clinica_veterinaria.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile -
+
+  frontend:
+    image: sgv-frontend-full-frontend
+    container_name: sgv_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    environment:
+      # Variables de entorno del frontend (ajusta según necesites)
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+      # Agrega aquí otras variables de entorno que necesite tu frontend
+    depends_on:
+      - backend
+    networks:
+      - sgv_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: sgv_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@sgv.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin123}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - sgv_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  sgv_network:
+    driver: bridge

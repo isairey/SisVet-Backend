@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: sgv-backend
+    env: python
+    buildCommand: bash build.sh
+    startCommand: gunicorn clinica_veterinaria.wsgi:application --bind 0.0.0.0:$PORT --timeout 30
+    envVars:
+      # Base de datos (Neon)
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      # Django
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        sync: false
+      # CORS
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      # Email - SendGrid (configurado en variables de entorno del Dashboard)
+      - key: EMAIL_BACKEND
+        value: django.core.mail.backends.smtp.EmailBackend
+      - key: EMAIL_HOST
+        value: smtp.sendgrid.net
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+      # Frontend
+      - key: FRONTEND_URL
+        sync: false
+

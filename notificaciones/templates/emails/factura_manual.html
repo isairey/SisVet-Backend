@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Factura Generada Manualmente</title>
+  </head>
+
+  <body style="margin:0; padding:0; background:#f5f6f8; font-family:Arial, sans-serif;">
+
+    <!-- CONTENEDOR -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f6f8; padding:20px 0;">
+      <tr>
+        <td align="center">
+
+          <!-- CARD -->
+          <table width="600" cellpadding="0" cellspacing="0" style="background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+
+            <!-- BANNER -->
+            <tr>
+              <td style="padding:0;">
+                <img src="https://i.imgur.com/A3vitN1.png" alt="Banner SGV" width="600" style="display:block; width:100%; max-width:600px;">
+              </td>
+            </tr>
+
+            <!-- TITULO -->
+            <tr>
+              <td style="padding:30px 40px 10px; text-align:center;">
+                <h2 style="margin:0; font-size:26px; color:#333;">Factura Generada Manualmente</h2>
+                <p style="margin-top:8px; color:#666; font-size:15px;">
+                  Has solicitado una copia de tu factura.
+                </p>
+              </td>
+            </tr>
+
+            <!-- MENSAJE -->
+            <tr>
+              <td style="padding:0 40px 20px;">
+                <p style="color:#555; font-size:15px; margin:0;">
+                  Hola <strong>{{cliente_nombre}}</strong>,
+                </p>
+                <p style="color:#555; font-size:15px; line-height:22px;">
+                  Aquí tienes la factura que solicitaste. Puedes verla también en tu historial.
+                </p>
+              </td>
+            </tr>
+
+            <!-- DATOS GENERALES -->
+            <tr>
+              <td style="padding:0 40px 30px;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                  <tr>
+                    <td style="padding:10px 0; font-size:15px; color:#333;">
+                      <strong>ID Factura:</strong> {{factura_id}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:5px 0; font-size:15px; color:#333;">
+                      <strong>Fecha de emisión:</strong> {{fecha}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:5px 0; font-size:15px; color:#333;">
+                      <strong>Estado:</strong>
+                      <span style="
+                        display:inline-block;
+                        padding:4px 10px;
+                        border-radius:6px;
+                        color:white;
+                        font-size:13px;
+                        font-weight:bold;
+                        {% if estado == 'PAGADA' %}
+                          background:#4CAF50;
+                        {% elif estado == 'PENDIENTE' %}
+                          background:#FFC107;
+                          color:#333;
+                        {% elif estado == 'ANULADA' %}
+                          background:#F44336;
+                        {% else %}
+                          background:#9E9E9E;
+                        {% endif %}
+                      ">
+                          {{estado}}
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- TABLA DETALLES -->
+            <tr>
+              <td style="padding:0 40px;">
+                <h3 style="color:#333; margin-bottom:10px;">Detalles</h3>
+
+                <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:14px;">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left; padding:8px; border-bottom:2px solid #ddd;">Descripción</th>
+                      <th style="text-align:center; padding:8px; border-bottom:2px solid #ddd;">Cant.</th>
+                      <th style="text-align:right; padding:8px; border-bottom:2px solid #ddd;">Precio</th>
+                      <th style="text-align:right; padding:8px; border-bottom:2px solid #ddd;">Subtotal</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% for d in detalles %}
+                    <tr>
+                      <td style="padding:8px; border-bottom:1px solid #eee;">{{d.descripcion}}</td>
+                      <td style="padding:8px; text-align:center; border-bottom:1px solid #eee;">{{d.cantidad}}</td>
+                      <td style="padding:8px; text-align:right; border-bottom:1px solid #eee;">${{d.precio_unitario}}</td>
+                      <td style="padding:8px; text-align:right; border-bottom:1px solid #eee;">${{d.subtotal}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+
+            <!-- TOTAL -->
+            <tr>
+              <td style="padding:20px 40px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="text-align:right; padding:10px; font-size:18px; color:#333;">
+                      <strong>Total:</strong> ${{total}}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- BOTÓN -->
+            <tr>
+              <td align="center" style="padding:20px 40px 30px;">
+                <a href="{{url_historial}}" 
+                   style="background:#4CAF50; color:white; padding:12px 25px; text-decoration:none; border-radius:6px; font-size:16px;">
+                  Ver factura en historial
+                </a>
+              </td>
+            </tr>
+
+            <!-- FOOTER -->
+            <tr>
+              <td style="background:#fafafa; padding:20px 40px; text-align:center; font-size:12px; color:#888;">
+                <p style="margin:0;">© {{anio_actual}} SGV - Clínica Veterinaria. Todos los derechos reservados.</p>
+                <p style="margin-top:5px;">Este correo es informativo, por favor no responda.</p>
+              </td>
+            </tr>
+
+          </table>
+
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

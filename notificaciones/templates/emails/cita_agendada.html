@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Cita Agendada - SGV</title>
+</head>
+
+<body style="margin:0; padding:0; background:#f5f6f8; font-family:Arial, sans-serif;">
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f6f8; padding:20px 0;">
+        <tr>
+            <td align="center">
+
+                <!-- CARD -->
+                <table width="600" cellpadding="0" cellspacing="0" 
+                       style="background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+
+                    <!-- BANNER -->
+                    <tr>
+                        <td style="padding:0;">
+                            <img src="https://i.imgur.com/A3vitN1.png" 
+                                 alt="Banner SGV" width="600"
+                                 style="display:block; width:100%; max-width:600px;">
+                        </td>
+                    </tr>
+
+                    <!-- TÍTULO -->
+                    <tr>
+                        <td style="padding:30px 40px 10px; text-align:center;">
+                            <h2 style="margin:0; font-size:26px; color:#333;">
+                                ¡Tu cita ha sido agendada!
+                            </h2>
+                            <p style="margin-top:8px; color:#666; font-size:15px;">
+                                Gracias por confiar en SGV – Clínica Veterinaria.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- MENSAJE PRINCIPAL -->
+                    <tr>
+                        <td style="padding:0 40px 20px;">
+                            <p style="color:#555; font-size:15px; margin:0;">
+                                Hola <strong>{{ ropietario_nombre }}</strong>,
+                            </p>
+                            <p style="color:#555; font-size:15px; line-height:22px;">
+                                Te confirmamos que tu cita para 
+                                <strong>{{ mascota_nombre }}</strong> ha sido agendada con éxito.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- DATOS DE LA CITA -->
+                    <tr>
+                        <td style="padding:0 40px 30px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+
+                                <tr>
+                                    <td style="padding:10px 0; font-size:15px; color:#333;">
+                                        <strong>Veterinario encargado:</strong> {{ veterinario_nombre }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:5px 0; font-size:15px; color:#333;">
+                                        <strong>Servicio:</strong> {{ servicio_nombre }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding:5px 0; font-size:15px; color:#333;">
+                                        <strong>Fecha y hora:</strong> {{ fecha_hora }}
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- FOOTER -->
+                    <tr>
+                        <td style="background:#fafafa; padding:20px 40px; text-align:center; font-size:12px; color:#888;">
+                            <p style="margin:0;">© {{anio_actual}} SGV - Clínica Veterinaria. Todos los derechos reservados.</p>
+                            <p style="margin-top:5px;">Este correo es informativo, por favor no responder.</p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
