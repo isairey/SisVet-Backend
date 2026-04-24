@@ -83,8 +83,8 @@ veterinary-clinic-backend/
 ### 1- Clonar el repositorio
 
 ```bash
-git clone https://github.com/<usuario>/<nombre-repo>.git
-cd veterinary-clinic-backend
+git clone https://github.com/isairey/SisVet-Backend.git
+cd SisVet-Backend
 ```
 
 ### 2️- Crear entorno virtual
